@@ -1,42 +1,28 @@
+# simple-pipeline.yml
+
 resources:
-- name: my-git-repo
-  type: git
-  source:
-    uri: https://github.com/narmadapittala/concourse.git
-    branch: main
-    private_key: ((git-private-key))  # Use a credential manager or vault for secure storage
+  - name: simple-repo
+    type: git
+    source:
+      uri: github.com/mareedu868/concourse.git
+      branch: main
 
 jobs:
-- name: build-and-deploy
-  plan:
-  - get: my-git-repo
-    trigger: true
-  - task: build-image
-    config:
-      platform: linux
-      image_resource:
-        type: docker-image
-        source: {repository: ubuntu}
-      inputs:
-      - name: my-git-repo
-      run:
-        path: /bin/bash
-        args:
-        - -c
-        - |
-          cd my-git-repo
-          docker build -t my-docker-image .
-  - task: deploy-image
-    config:
-      platform: linux
-      image_resource:
-        type: docker-image
-        source: {repository: ubuntu}
-      inputs:
-      - name: my-git-repo
-      run:
-        path: /bin/bash
-        args:
-        - -c
-        - |
-          docker run -d --name my-container my-docker-image
+  - name: simple-job
+    plan:
+      - get: simple-repo
+        trigger: true
+      - task: run-script
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source:
+              repository: alpine
+          inputs:
+            - name: simple-repo
+          run:
+            path: /bin/sh
+            args:
+              - -c
+              - "echo 'Running a simple script!' && cd simple-repo && ./run.sh"
