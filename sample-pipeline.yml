@@ -1,0 +1,31 @@
+# hello-pipeline.yml
+
+resources:
+  - name: my-github-repo
+    type: git
+    source:
+      uri: https://github.com/yourname/repo.git
+      branch: main
+    
+jobs:
+  - name: hello-world
+    public: true
+    plan:
+      - get: my-github-repo
+        trigger: true  # Trigger the job when there's a new commit
+      - task: hello-world
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source: {repository: ubuntu}
+          inputs:
+            - name: my-github-repo
+          run:
+            path: /bin/sh
+            args:
+              - -c
+              - |
+                cd my-github-repo
+                chmod +x run.sh
+                ./run.sh
