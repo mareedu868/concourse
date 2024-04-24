@@ -1,7 +1,6 @@
 # run.sh
 echo "##################################################"
-echo "Hello, world! Welcome to Concourse World"
-echo "##################################################"
-docker ps
-echo "##################################################"
+echo "Hello, World! Welcome to Concourse World"
+echo "##################################################
+
 
